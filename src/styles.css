@@ -1,12 +1,12 @@
 /* ALL PAGES COMMON STYLING */
 
 body {
-    background-image: url(https://www.w3schools.com/images/bg_sky_darker.gif);
+    background-image: url('./imgs/bg_sky_darker.gif');
 }
 
 h1 {
     color: #fff;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 100px;
     text-transform: uppercase;
     letter-spacing: 10px;
@@ -26,9 +26,9 @@ h1 {
     border: 3px solid rgb(99, 232, 255);
     border-radius: 30px;
     padding: 10px 50px;
-    background-image: url(https://www.w3schools.com/images/bg_sky_darker.gif);
+    background-image: url('./imgs/bg_sky_darker.gif');
     color: rgb(99, 232, 255);
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Courier New', Courier, monospace;
     font-weight: bold;
     font-size: 20px;
     text-transform: uppercase;
