@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { NumberDisplay } from "../number_display/NumberDisplay"
 
 import './MinesweeperGame.css'
@@ -30,17 +30,23 @@ export const MinesweeperGame = ({ minesweeperConfig }: { minesweeperConfig: Mine
 
     const remainingMines = mines - flaggedCount;
 
+    const restartGame = () => {
+        setCells(generateCells(rows, columns, mines))
+        setFlaggedCount(0);
+        setTimer(0);
+    }
+
     return (
         <div className='minesweeper-board'>
             <div className='game-app'>
                 <div className='game-header'>
                     <NumberDisplay value={remainingMines} />
-                    <div className='emoji'>🙃</div>
+                    <div className='emoji' onClick={restartGame}>🙃</div>
                     <NumberDisplay value={timer} />
                 </div>
                 <div className={`game-board ${gridClass}`}>
                     {cells.map((row, rowIndex) => 
-                        row.map((col, colIndex) =>
+                        row.map((_, colIndex) =>
                             <GameBoard key={`${rowIndex}-${colIndex}`} onFlaggedCountChange={handleFlaggedCountChange} />
                         )
                     )}
