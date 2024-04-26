@@ -13,37 +13,3 @@ h1 {
     display: flex;
     justify-content: center;
 }
-
-/* MAIN PAGE STYLING */
-
-.choose-level {
-    display: flex;
-    justify-content: center;
-    column-gap: 60px;
-}
-
-.level {
-    border: 3px solid rgb(99, 232, 255);
-    border-radius: 30px;
-    padding: 10px 50px;
-    background-image: url('./imgs/bg_sky_darker.gif');
-    color: rgb(99, 232, 255);
-    font-family: 'Courier New', Courier, monospace;
-    font-weight: bold;
-    font-size: 20px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    cursor: pointer;
-    text-decoration: none;
-}
-
-.level:hover {
-    transition: 0.3s;
-    border: 3px solid rgb(221, 250, 255);
-    color: rgb(221, 250, 255);
-    box-shadow: 0 0 25px 20px rgba(99, 232, 255, 0.4);
-}
-
-.ines-style {
-    color: rgb(0, 217, 255);
-}

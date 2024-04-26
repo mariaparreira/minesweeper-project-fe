@@ -1,0 +1,33 @@
+/* MAIN PAGE STYLING */
+
+.ines-style {
+    color: rgb(0, 217, 255);
+}
+
+.choose-level {
+    display: flex;
+    justify-content: center;
+    column-gap: 60px;
+}
+
+.level {
+    border: 3px solid rgb(99, 232, 255);
+    border-radius: 30px;
+    padding: 10px 50px;
+    color: rgb(99, 232, 255);
+    background-image: url('../imgs/bg_sky_darker.gif');
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    font-size: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.level:hover {
+    transition: 0.3s;
+    border: 3px solid rgb(221, 250, 255);
+    color: rgb(221, 250, 255);
+    box-shadow: 0 0 25px 20px rgba(99, 232, 255, 0.4);
+}

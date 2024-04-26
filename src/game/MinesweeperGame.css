@@ -1,0 +1,62 @@
+/* MINESWEEPER GAME STYLING */
+
+.minesweeper-board {
+    margin-top: 20px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.game-app {
+    background: #007c92;
+    padding: 16px;
+    border-width: 4px;
+    border-style: solid;
+    border-right-color: #004551;
+    border-bottom-color: #004551;
+    border-left-color: #00687b;
+    border-top-color: #00687b;
+}
+
+.game-header {
+    background: #007c92;
+    padding: 10px 12px;
+    border-width: 4px;
+    border-style: solid;
+    border-right-color: #00687b;
+    border-bottom-color: #00687b;
+    border-left-color: #004551;
+    border-top-color: #004551;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.game-board {
+    margin-top: 16px;
+    border-width: 4px;
+    border-style: solid;
+    border-right-color: #00687b;
+    border-bottom-color: #00687b;
+    border-left-color: #004551;
+    border-top-color: #004551;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+}
+
+.emoji {
+    width: 52px;
+    height: 52px;
+    font-size: 35px;
+    border-width: 4px;
+    border-style: solid;
+    border-right-color: #004551;
+    border-bottom-color: #004551;
+    border-left-color: #00687b;
+    border-top-color: #00687b;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}

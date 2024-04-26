@@ -1,3 +1,4 @@
+import React from "react";
 import { CLICK_SOUND_ID } from "./SoundContainer";
 
 export interface WithSoundProps {

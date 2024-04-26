@@ -1,3 +1,4 @@
+import React from 'react';
 import clickSound from './click-sound.wav';
 
 export const CLICK_SOUND_ID = 'click-sound';
