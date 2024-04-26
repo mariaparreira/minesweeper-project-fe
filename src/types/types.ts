@@ -14,3 +14,7 @@ export type Minesweeper = {
 export type NumberDisplayType = {
     value: number;
 }
+
+export interface GameBoardProps {
+    onFlaggedCountChange: (increment: number) => void;
+  }

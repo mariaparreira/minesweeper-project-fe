@@ -1,9 +1,6 @@
 import { Cell } from "../types/types";
 
-const rows = 8;
-const cols = 8;
-
-export const generateCells = (): Cell[][] => {
+export const generateCells = (rows: number, cols: number, mines: number): Cell[][] => {
     const cells: Cell[][] = [];
 
     for (let row = 0; row < rows; row++) {
@@ -15,6 +12,17 @@ export const generateCells = (): Cell[][] => {
                 isFlagged: false,
                 adjacentMines: 0
             });
+        }
+    }
+
+    // Randomly place mines
+    let minesPlaced = 0;
+    while (minesPlaced < mines) {
+        const row = Math.floor(Math.random() * rows);
+        const col = Math.floor(Math.random() * cols);
+        if (!cells[row][col].isMine) {
+            cells[row][col].isMine = true;
+            minesPlaced++;
         }
     }
 

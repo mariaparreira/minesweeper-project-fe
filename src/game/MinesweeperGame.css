@@ -41,8 +41,21 @@
     border-left-color: #004551;
     border-top-color: #004551;
     display: grid;
+}
+
+.easy-grid {
     grid-template-columns: repeat(8, 1fr);
     grid-template-rows: repeat(8, 1fr);
+}
+
+.medium-grid {
+    grid-template-columns: repeat(16, 1fr);
+    grid-template-rows: repeat(16, 1fr);
+}
+
+.hard-grid {
+    grid-template-columns: repeat(16, 1fr);
+    grid-template-rows: repeat(30, 1fr);
 }
 
 .emoji {

@@ -1,30 +1,50 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { NumberDisplay } from "../number_display/NumberDisplay"
 
 import './MinesweeperGame.css'
 import { generateCells } from "../utils/utils";
 import { GameBoard } from "./GameBoard";
+import { Minesweeper } from "../types/types";
 
-export const MinesweeperGame = () => {
-    const [cells, setCells] = useState(generateCells());
-    
-    const renderCells = (): React.ReactNode => {
-        return cells.map((row, rowIndex) => 
-            row.map((col, colIndex) =>
-                <GameBoard />
-            )
-        )
-    }
+export const MinesweeperGame = ({ minesweeperConfig }: { minesweeperConfig: Minesweeper & { gridClass: string } }) => {
+    const { rows, columns, mines, gridClass } = minesweeperConfig;
+    const [cells, setCells] = useState(generateCells(rows, columns, mines));
+    const [flaggedCount, setFlaggedCount] = useState(0);
+    const [timer, setTimer] = useState(0);
+
+    useEffect(() => {
+        setCells(generateCells(rows, columns, mines));
+        setFlaggedCount(0);
+        setTimer(0);
+
+        const intervalId = setInterval(() => {
+            setTimer(prevTime => prevTime + 1);
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, [rows, columns, mines]);
+
+    const handleFlaggedCountChange = (increment: number) => {
+        setFlaggedCount(prevCount => prevCount + increment);
+    };
+
+    const remainingMines = mines - flaggedCount;
 
     return (
         <div className='minesweeper-board'>
             <div className='game-app'>
                 <div className='game-header'>
-                    <NumberDisplay value={10} />
+                    <NumberDisplay value={remainingMines} />
                     <div className='emoji'>🙃</div>
-                    <NumberDisplay value={0} />
+                    <NumberDisplay value={timer} />
                 </div>
-                <div className='game-board'>{renderCells()}</div>
+                <div className={`game-board ${gridClass}`}>
+                    {cells.map((row, rowIndex) => 
+                        row.map((col, colIndex) =>
+                            <GameBoard key={`${rowIndex}-${colIndex}`} onFlaggedCountChange={handleFlaggedCountChange} />
+                        )
+                    )}
+                </div>
             </div>
         </div>
     )
