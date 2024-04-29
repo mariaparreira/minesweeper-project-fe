@@ -2,14 +2,16 @@
 
 .minesweeper-board {
     margin-top: 20px;
+    margin-bottom: 20px;
     position: relative;
     display: flex;
     justify-content: center;
+    overflow: hidden; /* prevent horizontal scrolling */
 }
 
 .game-app {
     background: #007c92;
-    padding: 16px;
+    padding: 8px;
     border-width: 4px;
     border-style: solid;
     border-right-color: #004551;
@@ -20,7 +22,7 @@
 
 .game-header {
     background: #007c92;
-    padding: 10px 12px;
+    padding: 6px 8px;
     border-width: 4px;
     border-style: solid;
     border-right-color: #00687b;
@@ -33,7 +35,7 @@
 }
 
 .game-board {
-    margin-top: 16px;
+    margin-top: 12px;
     border-width: 4px;
     border-style: solid;
     border-right-color: #00687b;
@@ -59,9 +61,9 @@
 }
 
 .emoji {
-    width: 52px;
-    height: 52px;
-    font-size: 35px;
+    width: 36px;
+    height: 36px;
+    font-size: 24px;
     border-width: 4px;
     border-style: solid;
     border-right-color: #004551;
@@ -72,4 +74,51 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
+
+    &:active {
+        border-right-color: #00687b;
+        border-bottom-color: #00687b;
+        border-left-color: #004551;
+        border-top-color: #004551;
+    }
+}
+
+@media (min-width: 768px) {
+    .game-app {
+        padding: 14px;
+    }
+
+    .game-header {
+        padding: 8px 10px;
+    }
+
+    .game-board {
+        margin-top: 14px;
+    }
+
+    .emoji {
+        width: 45px;
+        height: 45px;
+        font-size: 30px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .game-app {
+        padding: 16px;
+    }
+
+    .game-header {
+        padding: 10px 12px;
+    }
+
+    .game-board {
+        margin-top: 16px;
+    }
+
+    .emoji {
+        width: 52px;
+        height: 52px;
+        font-size: 35px;
+    }
 }

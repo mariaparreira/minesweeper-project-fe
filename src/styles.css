@@ -2,14 +2,32 @@
 
 body {
     background-image: url('./imgs/bg_sky_darker.gif');
+    margin: 0; /* remove default margin */
+    padding: 0; /* remove default padding */
 }
 
 h1 {
     color: #fff;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 100px;
+    font-size: 40px;
     text-transform: uppercase;
-    letter-spacing: 10px;
-    display: flex;
-    justify-content: center;
+    letter-spacing: 5px;
+    text-align: center;
+    margin-top: 20px; /* add space at the top */
+    margin-bottom: 40px; /* add space at the bottom */
+}
+
+@media (min-width: 768px) {
+    h1 {
+        font-size: 70px;
+    }
+}
+
+@media (min-width: 1024px) {
+    h1 {
+        font-size: 100px;
+        letter-spacing: 10px;
+        display: flex;
+        justify-content: center;
+    }
 }

@@ -25,9 +25,9 @@ export const MainPage = () => {
             <SoundContainer />
             <h1>M<b className='ines-style'>ines</b>weeper</h1>
             <div className='choose-level'>
-                <SoundButton className='level' onClick={() => handleDifficultyClick(8, 8, 10, 'easy-grid')}>Easy</SoundButton>
-                <SoundButton className='level' onClick={() => handleDifficultyClick(16, 16, 40, 'medium-grid')}>Medium</SoundButton>
-                <SoundButton className='level' onClick={() => handleDifficultyClick(30, 16, 99, 'hard-grid')}>Hard</SoundButton>
+                <SoundButton className='level' onClick={() => handleDifficultyClick(8, 8, 10, 'easy-grid')} soundType='click-sound'>Easy</SoundButton>
+                <SoundButton className='level' onClick={() => handleDifficultyClick(16, 16, 40, 'medium-grid')} soundType='click-sound'>Medium</SoundButton>
+                <SoundButton className='level' onClick={() => handleDifficultyClick(30, 16, 99, 'hard-grid')} soundType='click-sound'>Hard</SoundButton>
             </div>
             { minesweeperConfig !== null && <MinesweeperGame minesweeperConfig={minesweeperConfig} /> }
         </>
