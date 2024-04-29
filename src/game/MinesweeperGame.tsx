@@ -45,21 +45,27 @@ export const MinesweeperGame = ({ minesweeperConfig }: { minesweeperConfig: Mine
      *         * Once all non-mine cells are revealed, you win (stop time, set fireworks sound, show 'Congratulations' message).
      *      For win, save time to be shown in a leaderboard.
      */
-    const handleCellClick = (rowIndex: number, colIndex: number) => {
-        const clickedCell = cells[rowIndex][colIndex];
-        // If the clicked cell is a mine, end the game
-        if (clickedCell.isMine) {
-            // Handle game over logic here (e.g., display all mines, show game over message)
-            // You might also want to stop the timer or trigger other end-game actions
-            console.log('Game over! You clicked a mine.');
-            return;
-        }
+    
+    // const handleCellClick = (rowIndex: number, colIndex: number) => {
+    //     const clickedCell = cells[rowIndex][colIndex];
+    //     // If the clicked cell is a mine, end the game
+    //     if (clickedCell.isMine) {
+    //         // Handle game over logic here (e.g., display all mines, show game over message)
+    //         // You might also want to stop the timer or trigger other end-game actions
+    //         console.log('Game over! You clicked a mine.');
+    //         return;
+    //     }
         
-        // If the clicked cell is not a mine, reveal it
-        const newCells = [...cells];
-        newCells[rowIndex][colIndex].isRevealed = true;
-        setCells(newCells);
-    };
+    //     // If the clicked cell is not a mine, reveal it
+    //     const newCells = cells.map((row, rIndex) =>
+    //         row.map((cell, cIndex) =>
+    //             rIndex === rowIndex && cIndex === colIndex
+    //                 ? { ...cell, isRevealed: true } // Create a new cell with isRevealed set to true
+    //                 : cell
+    //         )
+    //     );
+    //     setCells(newCells);
+    // };    
 
     return (
         <div className='minesweeper-board'>
@@ -75,7 +81,7 @@ export const MinesweeperGame = ({ minesweeperConfig }: { minesweeperConfig: Mine
                             <GameBoard 
                                 key={`${rowIndex}-${colIndex}`}
                                 cell={cell}
-                                onCellClick={() => handleCellClick(rowIndex, colIndex)}
+                                // onCellClick={() => handleCellClick(rowIndex, colIndex)}
                             />
                         )
                     )}

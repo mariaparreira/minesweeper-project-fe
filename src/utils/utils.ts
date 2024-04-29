@@ -9,7 +9,7 @@ export const generateCells = (rows: number, cols: number, mines: number): Cell[]
         for (let col = 0; col < cols; col++) {
             cells[row].push({
                 isMine: false,
-                isRevealed: false,
+                isRevealed: true,
                 isFlagged: false,
                 adjacentMines: 0
             });
@@ -25,6 +25,27 @@ export const generateCells = (rows: number, cols: number, mines: number): Cell[]
         if (!currentCell.isMine) {
             currentCell.isMine = true;
             minesPlaced++;
+        }
+    }
+
+    // Calculate the numbers for each cell
+    for (let rowIndex = 0; rowIndex < rows; rowIndex++) {
+        for (let colIndex = 0; colIndex < cols; colIndex++) {
+            const currentCell = cells[rowIndex][colIndex]
+            if (!currentCell.isMine) {
+                for (let i = -1; i <= 1; i++)  {
+                    for (let j = -1; j <= 1; j++) {
+                        const row = rowIndex + i;
+                        const col = colIndex + j;
+
+                        if (row >= 0 && row < rows && col >= 0 && col < cols) {
+                            if (cells[row][col].isMine) {
+                                currentCell.adjacentMines++;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

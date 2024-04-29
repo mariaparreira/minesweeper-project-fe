@@ -16,5 +16,6 @@ export type NumberDisplayType = {
 }
 
 export interface GameBoardProps {
-    onFlaggedCountChange: (increment: number) => void;
+    cell: Cell;
+    // onCellClick: () => void;
 }
