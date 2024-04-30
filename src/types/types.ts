@@ -17,5 +17,6 @@ export type NumberDisplayType = {
 
 export interface GameBoardProps {
     cell: Cell;
-    // onCellClick: () => void;
+    onClick: () => void;
+    onContext: (e: React.MouseEvent) => void;
 }

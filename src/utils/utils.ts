@@ -9,7 +9,7 @@ export const generateCells = (rows: number, cols: number, mines: number): Cell[]
         for (let col = 0; col < cols; col++) {
             cells[row].push({
                 isMine: false,
-                isRevealed: true,
+                isRevealed: false,
                 isFlagged: false,
                 adjacentMines: 0
             });

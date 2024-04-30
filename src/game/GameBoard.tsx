@@ -2,7 +2,7 @@ import React from "react";
 import "./GameBoard.css";
 import { GameBoardProps } from "../types/types";
 
-export const GameBoard: React.FC<GameBoardProps> = ({ cell }) => {
+export const GameBoard: React.FC<GameBoardProps> = ({ cell, onClick, onContext }) => {
     const renderContent = (): React.ReactNode => {
 
         // If cell is revealed and is a mine
@@ -29,7 +29,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ cell }) => {
         return null;
     }
     return (
-        <div className={`board ${cell.isRevealed ? "revealed" : ""}`}>
+        <div className={`board ${cell.isRevealed ? "revealed" : ""}`} onClick={onClick} onContextMenu={onContext}>
             {renderContent()}
         </div>
     );

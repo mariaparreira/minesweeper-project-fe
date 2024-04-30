@@ -8,8 +8,8 @@ export const ARCADE_GAME_ID = 'arcade-game';
 export const SoundContainer: React.FC = () => {
     return (
         <div >
-            <audio id={CLICK_SOUND_ID} src={clickSound as string} />
-            <audio id={ARCADE_GAME_ID} src={arcadeGame as string} />
+            <audio id={CLICK_SOUND_ID} src={clickSound as string} preload='auto' />
+            <audio id={ARCADE_GAME_ID} src={arcadeGame as string} preload='auto' />
         </div>
     )
 }

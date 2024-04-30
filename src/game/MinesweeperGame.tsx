@@ -15,26 +15,31 @@ export const MinesweeperGame = ({ minesweeperConfig }: { minesweeperConfig: Mine
     const { rows, columns, mines, gridClass } = minesweeperConfig;
     const [cells, setCells] = useState(generateCells(rows, columns, mines));
     // const [flaggedCount, setFlaggedCount] = useState(0);
-    const [timer, setTimer] = useState(0);
+    const [timer, setTimer] = useState<number>(0);
+    const [live, setLive] = useState<boolean>(false);
+    const [minesCounter, setMinesCounter] = useState<number>(mines);
 
-    useEffect(() => {
-        setCells(generateCells(rows, columns, mines));
-        // setFlaggedCount(0);
-        setTimer(0);
-
+    const startGame = () => {
         const intervalId = setInterval(() => {
             setTimer(prevTime => prevTime + 1);
         }, 1000);
+        return intervalId;
+    }
 
-        return () => clearInterval(intervalId);
+    useEffect(() => {
+        setCells(generateCells(rows, columns, mines));
+        setTimer(0);
+        setLive(false);
+        setMinesCounter(mines);
     }, [rows, columns, mines]);
 
     // const remainingMines = mines - flaggedCount;
 
     const restartGame = () => {
         setCells(generateCells(rows, columns, mines))
-        // setFlaggedCount(0);
         setTimer(0);
+        setLive(false);
+        setMinesCounter(mines);
     }
 
     /** 
@@ -45,8 +50,33 @@ export const MinesweeperGame = ({ minesweeperConfig }: { minesweeperConfig: Mine
      *         * Once all non-mine cells are revealed, you win (stop time, set fireworks sound, show 'Congratulations' message).
      *      For win, save time to be shown in a leaderboard.
      */
+
+    const handleCellClick = (rowIndex: number, colIndex: number) => {
+        if (!live) {
+            setLive(true);
+            startGame();
+        }
+    }
+
+    const handleCellContext = (e: React.MouseEvent, rowIndex: number, colIndex: number) => {
+        e.preventDefault();
+        const cell = cells[rowIndex][colIndex];
+        if (!cell.isRevealed) {
+            const newCells = [...cells];
+            const currentCell = newCells[rowIndex][colIndex];
     
-    // const handleCellClick = (rowIndex: number, colIndex: number) => {
+            if (!currentCell.isFlagged && minesCounter > 0) {
+                newCells[rowIndex][colIndex] = { ...currentCell, isFlagged: true };
+                setMinesCounter(prevMines => prevMines - 1); // Decrease mine count
+            } else if (currentCell.isFlagged) {
+                newCells[rowIndex][colIndex] = { ...currentCell, isFlagged: false };
+                setMinesCounter(prevMines => prevMines + 1); // Increase mine count
+            }
+    
+            setCells(newCells);
+        }
+    };
+        // const handleCellClick = (rowIndex: number, colIndex: number) => {
     //     const clickedCell = cells[rowIndex][colIndex];
     //     // If the clicked cell is a mine, end the game
     //     if (clickedCell.isMine) {
@@ -71,7 +101,7 @@ export const MinesweeperGame = ({ minesweeperConfig }: { minesweeperConfig: Mine
         <div className='minesweeper-board'>
             <div className='game-app'>
                 <div className='game-header'>
-                    <NumberDisplay value={mines} />
+                    <NumberDisplay value={minesCounter} />
                     <SoundEmoji className='emoji' onClick={restartGame} soundType='arcade-game'>🙃</SoundEmoji>
                     <NumberDisplay value={timer} />
                 </div>
@@ -81,7 +111,8 @@ export const MinesweeperGame = ({ minesweeperConfig }: { minesweeperConfig: Mine
                             <GameBoard 
                                 key={`${rowIndex}-${colIndex}`}
                                 cell={cell}
-                                // onCellClick={() => handleCellClick(rowIndex, colIndex)}
+                                onClick={() => handleCellClick(rowIndex, colIndex)}
+                                onContext={(e) => handleCellContext(e, rowIndex, colIndex)}
                             />
                         )
                     )}
