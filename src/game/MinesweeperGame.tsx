@@ -1,31 +1,49 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { NumberDisplay } from "../number_display/NumberDisplay"
 
 import './MinesweeperGame.css'
-import { generateCells } from "../utils/utils";
+import { generateCells, revealAdjacentCells } from "../utils/utils";
 import { GameBoard } from "./GameBoard";
-import { Minesweeper } from "../types/types";
+import { Cell, Face, /*Minesweeper,*/ MinesweeperGameProps } from "../types/types";
 import { WithSoundProps, withSound } from "../sound/withSound";
 
 const SoundEmoji = withSound((props: React.ButtonHTMLAttributes<HTMLDivElement> & WithSoundProps) => (
     <div {...props} />
 ));
 
-export const MinesweeperGame = ({ minesweeperConfig }: { minesweeperConfig: Minesweeper & { gridClass: string } }) => {
+export const MinesweeperGame: React.FC<MinesweeperGameProps> = ({ minesweeperConfig, ws }) => {
     const { rows, columns, mines, gridClass } = minesweeperConfig;
     const [cells, setCells] = useState(generateCells(rows, columns, mines));
-    // const [flaggedCount, setFlaggedCount] = useState(0);
+    const [face, setFace] = useState<Face>(Face.smile);
     const [timer, setTimer] = useState<number>(0);
     const [live, setLive] = useState<boolean>(false);
     const [minesCounter, setMinesCounter] = useState<number>(mines);
+    const [isLost, setIsLost] = useState<boolean>(false);
+    const [isWon, setIsWon] = useState<boolean>(false);
 
-    const startGame = () => {
-        const intervalId = setInterval(() => {
-            setTimer(prevTime => prevTime + 1);
-        }, 1000);
-        return intervalId;
-    }
+    const gameBoardRef = useRef<HTMLDivElement>(null);
 
+    useEffect(() => {
+        const handleMouseDown = () => {
+            setFace(Face.upsideDownSmile);
+        };
+
+        const handleMouseUp = () => {
+            setFace(Face.smile);
+        }
+
+        const gameBoardElement = gameBoardRef.current;
+        if (gameBoardElement) {
+            gameBoardElement.addEventListener("mousedown", handleMouseDown);
+            gameBoardElement.addEventListener("mouseup", handleMouseUp);
+
+            return () => {
+                gameBoardElement.removeEventListener("mousedown", handleMouseDown);
+                gameBoardElement.removeEventListener("mouseup", handleMouseUp);
+            };
+        }
+    }, []);
+    
     useEffect(() => {
         setCells(generateCells(rows, columns, mines));
         setTimer(0);
@@ -33,15 +51,45 @@ export const MinesweeperGame = ({ minesweeperConfig }: { minesweeperConfig: Mine
         setMinesCounter(mines);
     }, [rows, columns, mines]);
 
-    // const remainingMines = mines - flaggedCount;
+    
+    useEffect(() => {
+        if (live && timer < 999) {
+            const time = setInterval(() => {
+                setTimer(timer + 1);
+            }, 1000);
+            
+            return () => {
+                clearInterval(time);
+            };
+        }
+    }, [live, timer]);
+    
+    useEffect(() => {
+        if (isLost) {
+            setLive(false);
+            setFace(Face.lost);
+            
+        }
+    }, [isLost]);
+    
+    useEffect(() => {
+        if (isWon) {
+            setLive(false);
+            setFace(Face.won);
+        }
+    }, [isWon]);
 
-    const restartGame = () => {
-        setCells(generateCells(rows, columns, mines))
-        setTimer(0);
+    // Handles the action of restarting the game
+    const handleRestartGame = () => {
         setLive(false);
+        setTimer(0);
+        setCells(generateCells(rows, columns, mines))
         setMinesCounter(mines);
+        setIsLost(false);
+        setIsWon(false);
+        setFace(Face.smile);
     }
-
+    
     /** 
      * TODO: 
      *      Reveal a cell:
@@ -51,14 +99,87 @@ export const MinesweeperGame = ({ minesweeperConfig }: { minesweeperConfig: Mine
      *      For win, save time to be shown in a leaderboard.
      */
 
+    // Handles when a player reveals a cell
     const handleCellClick = (rowIndex: number, colIndex: number) => {
+        if (isLost || isWon) return;
+
+        let newCells = cells.slice();
+        
         if (!live) {
+            // Make sure you don't click on a mine in the beggining
+            let isAMine = newCells[rowIndex][colIndex].isMine;
+            
+            while (isAMine) {
+                newCells = generateCells(rows, columns, mines);
+
+                if (!newCells[rowIndex][colIndex].isMine) {
+                    isAMine = false;
+                    break;
+                }
+            }
             setLive(true);
-            startGame();
         }
+        
+        const currentCell = newCells[rowIndex][colIndex];
+        
+        if (currentCell.isFlagged || currentCell.isRevealed) {
+            return;
+        }
+        
+        if (currentCell.isMine) {
+            // TODO: handle game over logic here
+            // Game over => display all mines, explosion sound and end the timer
+            setIsLost(true);
+            newCells = showAllMines()
+            setCells(newCells);
+            return;
+        }
+        
+        newCells = revealAdjacentCells(newCells, rowIndex, colIndex); // Reveals numbers and if empty, reveals adjacent cells as well
+        
+        console.log(`Clicked on ${rowIndex} and ${colIndex}`);
+
+        
+        // Check if won
+        let safeCells = false;
+        
+        for (let row = 0; row < rows; row++) {
+            for (let col = 0; col < columns; col++) {
+                const currentCell = newCells[row][col];
+                
+                if (!currentCell.isMine && !currentCell.isRevealed) {
+                    safeCells = true;
+                    break;
+                }
+            }
+        }
+        
+        if (!safeCells) {
+            newCells = newCells.map(row => 
+                row.map(cell => {
+                    if (cell.isMine) {
+                        return {
+                            ...cell,
+                            isFlagged: true,
+                        };
+                    }
+                    return cell;
+                })
+            );
+            setIsWon(true);
+        }
+        setCells(newCells);
+        
+        if (ws) {
+            ws.send(JSON.stringify({ row: rowIndex, col: colIndex}));
+        }
+        // sendCoordinates(rowIndex, colIndex);
     }
 
+    // Handles the flags, for the mine counter (decreasing and increasing)
     const handleCellContext = (e: React.MouseEvent, rowIndex: number, colIndex: number) => {
+        if (isLost || isWon) return;
+
         e.preventDefault();
         const cell = cells[rowIndex][colIndex];
         if (!cell.isRevealed) {
@@ -76,36 +197,31 @@ export const MinesweeperGame = ({ minesweeperConfig }: { minesweeperConfig: Mine
             setCells(newCells);
         }
     };
-        // const handleCellClick = (rowIndex: number, colIndex: number) => {
-    //     const clickedCell = cells[rowIndex][colIndex];
-    //     // If the clicked cell is a mine, end the game
-    //     if (clickedCell.isMine) {
-    //         // Handle game over logic here (e.g., display all mines, show game over message)
-    //         // You might also want to stop the timer or trigger other end-game actions
-    //         console.log('Game over! You clicked a mine.');
-    //         return;
-    //     }
-        
-    //     // If the clicked cell is not a mine, reveal it
-    //     const newCells = cells.map((row, rIndex) =>
-    //         row.map((cell, cIndex) =>
-    //             rIndex === rowIndex && cIndex === colIndex
-    //                 ? { ...cell, isRevealed: true } // Create a new cell with isRevealed set to true
-    //                 : cell
-    //         )
-    //     );
-    //     setCells(newCells);
-    // };    
+
+    const showAllMines = (): Cell[][] => {
+        const currentCell = cells.map(row => row.slice());
+        return currentCell.map(row => 
+            row.map(cell => {
+                if (cell.isMine) {
+                    return {
+                        ...cell,
+                        isRevealed: true,
+                    };
+                }
+                return cell;
+            })
+        );
+    };
 
     return (
         <div className='minesweeper-board'>
             <div className='game-app'>
                 <div className='game-header'>
                     <NumberDisplay value={minesCounter} />
-                    <SoundEmoji className='emoji' onClick={restartGame} soundType='arcade-game'>🙃</SoundEmoji>
+                    <SoundEmoji className='emoji' onClick={handleRestartGame} soundType='arcade-game'>{face}</SoundEmoji>
                     <NumberDisplay value={timer} />
                 </div>
-                <div className={`game-board ${gridClass}`}>
+                <div ref={gameBoardRef} className={`game-board ${gridClass}`}>
                     {cells.map((row, rowIndex) => 
                         row.map((cell, colIndex) =>
                             <GameBoard 
