@@ -1,4 +1,4 @@
-import React, { /*useEffect,*/ useState } from 'react';
+import React, { /*useEffect,*/ useRef, useState } from 'react';
 import { withSound, WithSoundProps } from '../sound/withSound';
 import { SoundContainer } from '../sound/SoundContainer';
 import './MainPage.css';
@@ -33,7 +33,8 @@ const fields: Record<Level, Field> = {
 
 export const MainPage = () => {
     const [minesweeperConfig, setMinesweeperConfig] = useState<MinesweeperConfig | null>(null);
-    const [ws, setWs] = useState<WebSocket | null>(null); //useRef
+    // const [ws, setWs] = useState<WebSocket | null>(null); //useRef
+    const wsRef = useRef<WebSocket | null>(null);
     
     const handleDifficultyClick = (level: Level) => {
         let playerName = null;
@@ -73,7 +74,7 @@ export const MainPage = () => {
 
             newWs.onopen = () => {
                 console.log("Websocket connection established!");
-                setWs(newWs);
+                wsRef.current = newWs;
             };
 
             newWs.onmessage = (event) => {
@@ -109,10 +110,10 @@ export const MainPage = () => {
 
     // Handles websocket messages
     const handleCellClick = (rowIndex: number, colIndex: number) => {
-        if (!ws) return;
+        if (!wsRef.current) return;
 
         // Send coordinates via WebSocket
-        ws.send(JSON.stringify({ row: rowIndex, col: colIndex }));
+        wsRef.current.send(JSON.stringify({ row: rowIndex, col: colIndex }));
     };
 
     // useEffect(() => {
@@ -144,7 +145,7 @@ export const MainPage = () => {
             </div>
             )}
             
-            { minesweeperConfig !== null && <MinesweeperGame minesweeperConfig={minesweeperConfig} ws={ws} onCellClick={handleCellClick} /> }
+            { minesweeperConfig !== null && <MinesweeperGame minesweeperConfig={minesweeperConfig} ws={wsRef.current} onCellClick={handleCellClick} /> }
         </>
     );
 };
