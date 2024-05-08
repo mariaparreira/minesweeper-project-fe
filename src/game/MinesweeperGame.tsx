@@ -11,7 +11,7 @@ const SoundEmoji = withSound((props: React.ButtonHTMLAttributes<HTMLDivElement> 
     <div {...props} />
 ));
 
-export const MinesweeperGame: React.FC<MinesweeperGameProps> = ({ minesweeperConfig, ws }) => {
+export const MinesweeperGame: React.FC<MinesweeperGameProps & { onCellClick : (rowIndex: number, colIndex: number) => void }> = ({ minesweeperConfig, onCellClick }) => {
     const { rows, columns, mines, gridClass } = minesweeperConfig;
     const [cells, setCells] = useState(generateCells(rows, columns, mines));
     const [face, setFace] = useState<Face>(Face.smile);
@@ -128,9 +128,9 @@ export const MinesweeperGame: React.FC<MinesweeperGameProps> = ({ minesweeperCon
         
         if (currentCell.isMine) {
             // TODO: handle game over logic here
-            // Game over => display all mines, explosion sound and end the timer
+            // Game over => explosion sound
             setIsLost(true);
-            newCells = showAllMines()
+            newCells = showAllMines() // Displays all mines
             setCells(newCells);
             return;
         }
@@ -170,10 +170,7 @@ export const MinesweeperGame: React.FC<MinesweeperGameProps> = ({ minesweeperCon
         }
         setCells(newCells);
         
-        if (ws) {
-            ws.send(JSON.stringify({ row: rowIndex, col: colIndex}));
-        }
-        // sendCoordinates(rowIndex, colIndex);
+        onCellClick(rowIndex, colIndex); // When a cell is clicked, it calls the function with coordinates
     }
 
     // Handles the flags, for the mine counter (decreasing and increasing)

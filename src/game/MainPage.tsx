@@ -107,6 +107,14 @@ export const MainPage = () => {
         
     };
 
+    // Handles websocket messages
+    const handleCellClick = (rowIndex: number, colIndex: number) => {
+        if (!ws) return;
+
+        // Send coordinates via WebSocket
+        ws.send(JSON.stringify({ row: rowIndex, col: colIndex }));
+    };
+
     // useEffect(() => {
     //     if (!ws) {
     //         return;
@@ -136,7 +144,7 @@ export const MainPage = () => {
             </div>
             )}
             
-            { minesweeperConfig !== null && <MinesweeperGame minesweeperConfig={minesweeperConfig} ws={ws} /> }
+            { minesweeperConfig !== null && <MinesweeperGame minesweeperConfig={minesweeperConfig} ws={ws} onCellClick={handleCellClick} /> }
         </>
     );
 };
