@@ -46,18 +46,18 @@
 }
 
 .easy-grid {
-    grid-template-columns: repeat(8, 1fr);
-    grid-template-rows: repeat(8, 1fr);
+    grid-template-columns: repeat(8, 30px);
+    grid-template-rows: repeat(8, 30px);
 }
 
 .medium-grid {
-    grid-template-columns: repeat(16, 1fr);
-    grid-template-rows: repeat(16, 1fr);
+    grid-template-columns: repeat(16, 30px);
+    grid-template-rows: repeat(16, 30px);
 }
 
 .expert-grid {
-    grid-template-columns: repeat(16, 1fr);
-    grid-template-rows: repeat(30, 1fr);
+    grid-template-columns: repeat(16, 30px);
+    grid-template-rows: repeat(30, 30px);
 }
 
 .emoji {
@@ -101,6 +101,21 @@
         height: 45px;
         font-size: 30px;
     }
+
+    .easy-grid {
+        grid-template-columns: repeat(8, 35px);
+        grid-template-rows: repeat(8, 35px);
+    }
+    
+    .medium-grid {
+        grid-template-columns: repeat(16, 35px);
+        grid-template-rows: repeat(16, 35px);
+    }
+    
+    .expert-grid {
+        grid-template-columns: repeat(16, 35px);
+        grid-template-rows: repeat(30, 35px);
+    }
 }
 
 @media (min-width: 1024px) {
@@ -120,5 +135,20 @@
         width: 52px;
         height: 52px;
         font-size: 35px;
+    }
+    
+    .easy-grid {
+        grid-template-columns: repeat(8, 45px);
+        grid-template-rows: repeat(8, 45px);
+    }
+    
+    .medium-grid {
+        grid-template-columns: repeat(16, 45px);
+        grid-template-rows: repeat(16, 45px);
+    }
+    
+    .expert-grid {
+        grid-template-columns: repeat(16, 45px);
+        grid-template-rows: repeat(30, 45px);
     }
 }

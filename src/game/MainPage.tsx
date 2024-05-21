@@ -1,4 +1,4 @@
-import React, { /*useEffect,*/ useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { withSound, WithSoundProps } from '../sound/withSound';
 import { SoundContainer } from '../sound/SoundContainer';
 import './MainPage.css';
@@ -33,7 +33,6 @@ const fields: Record<Level, Field> = {
 
 export const MainPage = () => {
     const [minesweeperConfig, setMinesweeperConfig] = useState<MinesweeperConfig | null>(null);
-    // const [ws, setWs] = useState<WebSocket | null>(null); //useRef
     const wsRef = useRef<WebSocket | null>(null);
     
     const handleDifficultyClick = (level: Level) => {
@@ -81,6 +80,11 @@ export const MainPage = () => {
                 try {
                 const message = JSON.parse(event.data);
                 console.log("Received message from the server:", message);
+
+                // setMinesweeperConfig({
+                //     ...minesweeperConfig,
+                //     cells: message.board,
+                // }); // Set the difficulty configuration
                 } catch (err) {
                     console.error(event.data);
                 }
@@ -109,28 +113,18 @@ export const MainPage = () => {
     };
 
     // Handles websocket messages
-    const handleCellClick = (rowIndex: number, colIndex: number) => {
+    const handleCellClick = (row: number, col: number) => {
         if (!wsRef.current) return;
 
         // Send coordinates via WebSocket
-        wsRef.current.send(JSON.stringify({ row: rowIndex, col: colIndex }));
+        wsRef.current.send(JSON.stringify({ row, col, action: "reveal" }));
     };
 
-    // useEffect(() => {
-    //     if (!ws) {
-    //         return;
-    //     }
-
-    //     const sendCoordinates = (row: number, col: number) => {
-    //         ws.send(JSON.stringify({row: row, col: col}));
-    //     };
-
-    //     (window as any).sendCoordinates = sendCoordinates;
-
-    //     return () => {
-    //         delete (window as any).sendCoordinates;
-    //     }
-    // }, [ws]);
+    const handleCellContext = (row: number, col: number) => {
+        if (wsRef.current) {
+          wsRef.current.send(JSON.stringify({ row, col, action: "flag" }));
+        }
+      };
 
     return (
         <>
@@ -145,7 +139,7 @@ export const MainPage = () => {
             </div>
             )}
             
-            { minesweeperConfig !== null && <MinesweeperGame minesweeperConfig={minesweeperConfig} ws={wsRef.current} onCellClick={handleCellClick} /> }
+            { minesweeperConfig !== null && <MinesweeperGame minesweeperConfig={minesweeperConfig} onCellClick={handleCellClick} onCellContext={handleCellContext} /> }
         </>
     );
 };

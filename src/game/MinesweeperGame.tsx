@@ -11,7 +11,7 @@ const SoundEmoji = withSound((props: React.ButtonHTMLAttributes<HTMLDivElement> 
     <div {...props} />
 ));
 
-export const MinesweeperGame: React.FC<MinesweeperGameProps & { onCellClick : (rowIndex: number, colIndex: number) => void }> = ({ minesweeperConfig, onCellClick }) => {
+export const MinesweeperGame: React.FC<MinesweeperGameProps> = ({ minesweeperConfig, onCellClick, onCellContext }) => {
     const { rows, columns, mines, gridClass } = minesweeperConfig;
     const [cells, setCells] = useState(generateCells(rows, columns, mines));
     const [face, setFace] = useState<Face>(Face.smile);
@@ -193,6 +193,7 @@ export const MinesweeperGame: React.FC<MinesweeperGameProps & { onCellClick : (r
     
             setCells(newCells);
         }
+        onCellContext(rowIndex, colIndex);
     };
 
     const showAllMines = (): Cell[][] => {
