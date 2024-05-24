@@ -29,7 +29,11 @@ export const GameBoard: React.FC<GameBoardProps> = ({ cell, onClick, onContext }
         return null;
     }
     return (
-        <div className={`board ${cell.isRevealed ? "revealed" : ""}`} onClick={onClick} onContextMenu={onContext}>
+        <div 
+            className={`board ${cell.isRevealed ? "revealed" : ""}`} 
+            onClick={onClick} 
+            onContextMenu={onContext}
+        >
             {renderContent()}
         </div>
     );

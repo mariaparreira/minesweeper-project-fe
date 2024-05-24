@@ -1,10 +1,11 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { withSound, WithSoundProps } from '../sound/withSound';
 import { SoundContainer } from '../sound/SoundContainer';
 import './MainPage.css';
 import '../styles.css';
 import { MinesweeperGame } from './MinesweeperGame';
-import { Field, Level, Minesweeper } from '../types/types';
+import { Cell, Field, Level, Minesweeper } from '../types/types';
+import { generateCells } from '../utils/utils';
 
 // Define a new type that extends the Minesweeper type to include gridClass
 export type MinesweeperConfig = Minesweeper & { gridClass: string };
@@ -33,7 +34,26 @@ const fields: Record<Level, Field> = {
 
 export const MainPage = () => {
     const [minesweeperConfig, setMinesweeperConfig] = useState<MinesweeperConfig | null>(null);
+    const [board, setBoard] = useState<Cell[][]>([]);
+    const [timer, setTimer] = useState<number>(0);
+    const [live, setLive] = useState<boolean>(false);
+    const [gameOver, setGameOver] = useState(false);
+    const [gameWon, setGameWon] = useState(false);
+    // const [gameOverMessage, setGameOverMessage] = useState<string | null>(null);
+    
     const wsRef = useRef<WebSocket | null>(null);
+
+    useEffect(() => {
+        if (live && timer < 999) {
+            const time = setInterval(() => {
+                setTimer(timer + 1);
+            }, 1000);
+            
+            return () => {
+                clearInterval(time);
+            };
+        }
+    }, [live, timer]);
     
     const handleDifficultyClick = (level: Level) => {
         let playerName = null;
@@ -66,44 +86,46 @@ export const MainPage = () => {
             const gameId = data.substring(gameIdIndex);
             console.log("Extracted game ID:", gameId);
 
-            const wsUrl = `ws://127.0.0.1:8000/game/connect/${gameId}`;
-            const newWs = new WebSocket(wsUrl);
-            
-            (window as any).ws = newWs;
+            const ws = new WebSocket(`ws://127.0.0.1:8000/game/connect/${gameId}`);
 
-            newWs.onopen = () => {
+            ws.onopen = () => {
                 console.log("Websocket connection established!");
-                wsRef.current = newWs;
+                wsRef.current = ws;
             };
 
-            newWs.onmessage = (event) => {
+            ws.onmessage = (event) => {
                 try {
                 const message = JSON.parse(event.data);
                 console.log("Received message from the server:", message);
 
-                // setMinesweeperConfig({
-                //     ...minesweeperConfig,
-                //     cells: message.board,
-                // }); // Set the difficulty configuration
+                if (message.board) {
+                    setBoard(message.board);
+                }
+
                 } catch (err) {
                     console.error(event.data);
                 }
             };
             
-            newWs.onerror = (error) => {
+            ws.onerror = (error) => {
                 console.log("Websocket error:", error);
             }
 
-            newWs.onclose = () => {
+            ws.onclose = () => {
                 console.log("Websocket connection closed");
             };
 
+            setBoard(generateCells(fields[level].rows, fields[level].columns));
             setMinesweeperConfig({
                 ...fields[level],
                 playerName,
                 gameId,
                 gridClass: `${level}-grid`,
             }); // Set the difficulty configuration
+            setTimer(0);
+            setLive(false);
+            setGameOver(false);
+            setGameWon(false);
         })
         .catch(error => {
             console.log("Error:", error);
@@ -114,17 +136,62 @@ export const MainPage = () => {
 
     // Handles websocket messages
     const handleCellClick = (row: number, col: number) => {
-        if (!wsRef.current) return;
+        if (!wsRef.current || gameOver || gameWon) return;
 
-        // Send coordinates via WebSocket
+        if (!live) {
+            setLive(true);
+        }
+
+        const cell = board[row][col];
+
+        // Check if it's flagged or revealed
+        if (cell.isFlagged || cell.isRevealed) return; // Does nothing
+
+        // Check for losing outcome
+        if (cell.isMine) {
+            const updatedBoard = board.map(row => 
+                row.map(cell => ({
+                    ...cell,
+                    isRevealed: true,
+                }))
+            );
+            setBoard(updatedBoard);
+            setGameOver(true);
+            setLive(false);
+            console.log("Game Over! You clicked on a mine.");
+            wsRef.current?.close();
+        } else {
+            let updatedBoard = [...board];
+            // Check for winning outcome
+            updatedBoard[row][col].isRevealed = true;
+            setBoard(updatedBoard);
+
+            let allNonMineRevealed = true;
+            updatedBoard.forEach(row => {
+                row.forEach(cell => {
+                    if (!cell.isMine && !cell.isRevealed) {
+                        allNonMineRevealed = false;
+                    }
+                });
+            });
+
+            if (allNonMineRevealed) {
+                setGameWon(true);
+                setLive(false);
+                console.log("Congratulations! You win!");
+            }
+        }
+
+        // Send coordinates via WebSocket with action: reveal
         wsRef.current.send(JSON.stringify({ row, col, action: "reveal" }));
     };
 
     const handleCellContext = (row: number, col: number) => {
-        if (wsRef.current) {
-          wsRef.current.send(JSON.stringify({ row, col, action: "flag" }));
+        if (wsRef.current && !gameOver && !gameWon) {
+            // Send coordinates via WebSocket with action: flag
+            wsRef.current.send(JSON.stringify({ row, col, action: "flag" }));
         }
-      };
+    };
 
     return (
         <>
@@ -139,7 +206,17 @@ export const MainPage = () => {
             </div>
             )}
             
-            { minesweeperConfig !== null && <MinesweeperGame minesweeperConfig={minesweeperConfig} onCellClick={handleCellClick} onCellContext={handleCellContext} /> }
+            { minesweeperConfig && 
+                <MinesweeperGame 
+                    minesweeperConfig={minesweeperConfig} 
+                    board={board}
+                    timer={timer}
+                    gameOver={gameOver}
+                    gameWon={gameWon}
+                    onCellClick={handleCellClick} 
+                    onCellContext={handleCellContext} 
+                /> 
+            }
         </>
     );
 };

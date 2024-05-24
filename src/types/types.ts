@@ -10,7 +10,7 @@ export type Cell = {
 // export type Cell2 = "unrevealed" | "flag" | "empty" | "mine" | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 export enum Face {
-    upsideDownSmile = "🙃",
+    explodingHead = "🤯",
     smile = "🙂",
     won = "🥳",
     lost = "🥺"
@@ -37,7 +37,11 @@ export type NumberDisplayType = {
 
 export interface MinesweeperGameProps {
     minesweeperConfig: MinesweeperConfig;
-    onCellClick : (rowIndex: number, colIndex: number) => void
+    board: Cell[][];
+    timer: number;
+    gameOver: boolean;
+    gameWon: boolean;
+    onCellClick : (row: number, col: number) => void;
     onCellContext: (row: number, col: number) => void;
 }
 
