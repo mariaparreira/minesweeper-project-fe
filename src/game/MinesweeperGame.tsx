@@ -21,7 +21,7 @@ export const MinesweeperGame: React.FC<MinesweeperGameProps> = ({
         
     const { mines, gridClass } = minesweeperConfig;
     const [face, setFace] = useState<Face>(Face.smile);
-    const [flagsCounter, setFlagsCounter] = useState<number>(0); // Track the number of flags placed
+    const [flagsCounter, setFlagsCounter] = useState<number>(0);
     const [currentBoard, setCurrentBoard] = useState(board);
 
     const gameBoardRef = useRef<HTMLDivElement>(null);

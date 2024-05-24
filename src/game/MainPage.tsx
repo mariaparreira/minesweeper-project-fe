@@ -39,7 +39,6 @@ export const MainPage = () => {
     const [live, setLive] = useState<boolean>(false);
     const [gameOver, setGameOver] = useState(false);
     const [gameWon, setGameWon] = useState(false);
-    // const [gameOverMessage, setGameOverMessage] = useState<string | null>(null);
     
     const wsRef = useRef<WebSocket | null>(null);
 
