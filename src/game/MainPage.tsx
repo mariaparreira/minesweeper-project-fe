@@ -7,6 +7,11 @@ import { MinesweeperGame } from './MinesweeperGame';
 import { Cell, Field, Level, Minesweeper } from '../types/types';
 import { generateCells } from '../utils/utils';
 
+import winGame from "../sound/win/clapping.wav";
+import loseGame from "../sound/lose/explosion.wav";
+
+import Confetti from "react-confetti";
+
 // Define a new type that extends the Minesweeper type to include gridClass
 export type MinesweeperConfig = Minesweeper & { gridClass: string };
 
@@ -39,8 +44,12 @@ export const MainPage = () => {
     const [live, setLive] = useState<boolean>(false);
     const [gameOver, setGameOver] = useState(false);
     const [gameWon, setGameWon] = useState(false);
+
+    const [clappingAudio] = useState(new Audio(winGame));
+    const [explodingAudio] = useState(new Audio(loseGame));
+    const [gameOverSoundLoaded, setGameOverSoundLoaded] = useState(false);
     
-    const wsRef = useRef<WebSocket | null>(null);
+    const wsRef = useRef<WebSocket | null>(null);    
 
     useEffect(() => {
         if (live && timer < 999) {
@@ -53,6 +62,24 @@ export const MainPage = () => {
             };
         }
     }, [live, timer]);
+
+    useEffect(() => {
+        if (gameWon) {
+            clappingAudio.play();
+        }
+    }, [gameWon, clappingAudio]);
+
+    useEffect(() => {
+        if (gameOver) {
+            if (!gameOverSoundLoaded) {
+                explodingAudio.play();
+                explodingAudio.addEventListener("canplaythrough", () => {
+                    setGameOverSoundLoaded(true);
+                    explodingAudio.play();
+                })
+            }
+        }
+    }, [gameOver, explodingAudio, gameOverSoundLoaded]);
     
     const handleDifficultyClick = (level: Level) => {
         let playerName = null;
@@ -76,14 +103,11 @@ export const MainPage = () => {
             if (!response.ok) {
                 throw new Error('Network response not ok...');
             }
-            return response.json();
+            return response.text();
         })
         .then((data: string) => {
-            console.log('Response data:', data);
-
-            const gameIdIndex = data.lastIndexOf(":") + 2;
-            const gameId = data.substring(gameIdIndex);
-            console.log("Extracted game ID:", gameId);
+            const json= JSON.parse(data);
+            const { gameId } = json;
 
             const ws = new WebSocket(`ws://127.0.0.1:8000/game/connect/${gameId}`);
 
@@ -195,14 +219,15 @@ export const MainPage = () => {
     return (
         <>
             <SoundContainer />
+            { gameWon && <Confetti />}
             <h1>M<b className='ines-style'>ines</b>weeper</h1>
             
             { !minesweeperConfig && (
-            <div className='choose-level'>
-                <SoundButton className='level' onClick={() => handleDifficultyClick("easy")} soundType='click-sound'>Easy</SoundButton>
-                <SoundButton className='level' onClick={() => handleDifficultyClick("medium")} soundType='click-sound'>Medium</SoundButton>
-                <SoundButton className='level' onClick={() => handleDifficultyClick("expert")} soundType='click-sound'>Expert</SoundButton>
-            </div>
+                <div className='choose-level'>
+                    <SoundButton className='level' onClick={() => handleDifficultyClick("easy")} soundType='click-sound'>Easy</SoundButton>
+                    <SoundButton className='level' onClick={() => handleDifficultyClick("medium")} soundType='click-sound'>Medium</SoundButton>
+                    <SoundButton className='level' onClick={() => handleDifficultyClick("expert")} soundType='click-sound'>Expert</SoundButton>
+                </div>
             )}
             
             { minesweeperConfig && 
