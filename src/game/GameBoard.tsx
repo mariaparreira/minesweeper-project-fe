@@ -28,11 +28,21 @@ export const GameBoard: React.FC<GameBoardProps> = ({ cell, onClick, onContext }
 
         return null;
     }
+
+    // Generate random falling duration and delay
+    const fallingDuration = `${Math.random() * 3 + 2}s`;
+    const fallingDelay = `${Math.random() * 2}s`;
+
     return (
         <div 
-            className={`board ${cell.isRevealed ? "revealed" : ""}`} 
+            className={`board ${cell.isRevealed ? "revealed" : ""} ${cell.isFalling ? "falling" : ""}`} 
             onClick={onClick} 
             onContextMenu={onContext}
+            style={{ 
+                // animationDelay: cell.isFalling ? animationDelay: '0s',
+                animationDuration: cell.isFalling ? fallingDuration: '0s',
+                animationDelay: cell.isFalling ? fallingDelay: '0s',
+            }}
         >
             {renderContent()}
         </div>

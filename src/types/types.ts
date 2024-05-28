@@ -5,6 +5,7 @@ export type Cell = {
     isRevealed: boolean;
     isFlagged: boolean;
     adjacentMines: number;
+    isFalling?: boolean;
 };
 
 export enum Face {
@@ -12,7 +13,7 @@ export enum Face {
     smile = "🙂",
     won = "🥳",
     lost = "🥺"
-}
+};
 
 export type Level = "easy" | "medium" | "expert";
 
@@ -25,12 +26,12 @@ export type Field = {
 export type Minesweeper = Field & {
     gameId: string;
     playerName: string;
-}
+};
 
 
 export type NumberDisplayType = {
     value: number;
-}
+};
 
 export interface MinesweeperGameProps {
     minesweeperConfig: MinesweeperConfig;
@@ -40,20 +41,20 @@ export interface MinesweeperGameProps {
     gameWon: boolean;
     onCellClick : (row: number, col: number) => void;
     onCellContext: (row: number, col: number) => void;
-}
+};
 
 export interface GameBoardProps {
     cell: Cell;
     onClick: () => void;
     onContext: (e: React.MouseEvent) => void;
-}
+};
 
 export type LeaderboardEntry = {
     playerName: string;
     time: number
-}
+};
 
 export type LeaderboardProps = {
     data: LeaderboardEntry[];
     onClose: () => void;
-}
+};

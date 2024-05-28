@@ -27,6 +27,22 @@
     cursor: default;
 }
 
+.board.falling {
+    /* background-color: #007c92; */
+    animation: shake 2s ease forwards;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    50% { transform: translateX(2px); }
+    75% { transform: translateX(-2px); }
+    100% { 
+        transform: translateX(0); 
+        transform: translateY(1500px);
+    }
+}
+
 .adjacent-1 { color: #76c4ff; }
 .adjacent-2 { color: #7dff81; }
 .adjacent-3 { color: #ffda6d; }

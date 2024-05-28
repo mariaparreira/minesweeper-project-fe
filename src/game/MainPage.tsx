@@ -11,6 +11,7 @@ import { Leaderboard } from './Leaderboard';
 
 import winGame from "../sound/win/clapping.wav";
 import loseGame from "../sound/lose/explosion.wav";
+import fallCells from "../sound/lose/falling-cells.mp3";
 
 import Confetti from "react-confetti";
 
@@ -53,6 +54,7 @@ export const MainPage = () => {
 
     const [clappingAudio] = useState(new Audio(winGame));
     const [explodingAudio] = useState(new Audio(loseGame));
+    const [fallingAudio] = useState(new Audio(fallCells));
     const [gameOverSoundLoaded, setGameOverSoundLoaded] = useState(false);
     
     const wsRef = useRef<WebSocket | null>(null);    
@@ -79,9 +81,11 @@ export const MainPage = () => {
         if (gameOver) {
             if (!gameOverSoundLoaded) {
                 explodingAudio.play();
+                fallingAudio.play();
                 explodingAudio.addEventListener("canplaythrough", () => {
                     setGameOverSoundLoaded(true);
                     explodingAudio.play();
+                    fallingAudio.play();
                 })
             }
         }
@@ -179,6 +183,7 @@ export const MainPage = () => {
                 row.map(cell => ({
                     ...cell,
                     isRevealed: true,
+                    isFalling: true,
                 }))
             );
             setBoard(updatedBoard);
