@@ -1,4 +1,4 @@
-import { IoClose } from 'react-icons/io5';
+import { FaTimes } from 'react-icons/fa';
 
 import { LeaderboardProps } from "../types/types";
 import "./Leaderboard.css";
@@ -17,7 +17,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ data, onClose }) => {
                         </div>
                     ))}
                 </div>
-                <SoundButton className="close-button" onClick={onClose} soundType="arcade-game"><IoClose /></SoundButton>
+                <SoundButton className="close-button" onClick={onClose} soundType="arcade-game"><FaTimes /></SoundButton>
             </div>
         </>
     )
