@@ -4,18 +4,21 @@ import { SoundContainer } from '../sound/SoundContainer';
 import './MainPage.css';
 import '../styles.css';
 import { MinesweeperGame } from './MinesweeperGame';
-import { Cell, Field, Level, Minesweeper } from '../types/types';
+import { Cell, Field, LeaderboardEntry, Level, Minesweeper } from '../types/types';
 import { generateCells } from '../utils/utils';
+
+import { Leaderboard } from './Leaderboard';
 
 import winGame from "../sound/win/clapping.wav";
 import loseGame from "../sound/lose/explosion.wav";
 
 import Confetti from "react-confetti";
 
+
 // Define a new type that extends the Minesweeper type to include gridClass
 export type MinesweeperConfig = Minesweeper & { gridClass: string };
 
-const SoundButton = withSound((props: React.ButtonHTMLAttributes<HTMLButtonElement> & WithSoundProps) => (
+export const SoundButton = withSound((props: React.ButtonHTMLAttributes<HTMLButtonElement> & WithSoundProps) => (
     <button {...props} />
 ));
 
@@ -44,6 +47,9 @@ export const MainPage = () => {
     const [live, setLive] = useState<boolean>(false);
     const [gameOver, setGameOver] = useState(false);
     const [gameWon, setGameWon] = useState(false);
+
+    const [showLeaderboard, setShowLeaderboard] = useState(false);
+    const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
 
     const [clappingAudio] = useState(new Audio(winGame));
     const [explodingAudio] = useState(new Audio(loseGame));
@@ -89,8 +95,6 @@ export const MainPage = () => {
         } while (!playerName);
         
         const url = `http://127.0.0.1:8000/game/create/${level}`;
-
-        console.log("Fetching from url:", url);
         
         fetch(url, {
             method: 'POST',
@@ -109,17 +113,16 @@ export const MainPage = () => {
             const json= JSON.parse(data);
             const { gameId } = json;
 
-            const ws = new WebSocket(`ws://127.0.0.1:8000/game/connect/${gameId}`);
+            const ws = new WebSocket(`ws://127.0.0.1:8000/game/connect/${gameId}?playerName=${encodeURIComponent(playerName)}`);
 
             ws.onopen = () => {
-                console.log("Websocket connection established!");
+                // console.log("Websocket connection established!");
                 wsRef.current = ws;
             };
 
             ws.onmessage = (event) => {
                 try {
                 const message = JSON.parse(event.data);
-                console.log("Received message from the server:", message);
 
                 if (message.board) {
                     setBoard(message.board);
@@ -130,13 +133,13 @@ export const MainPage = () => {
                 }
             };
             
-            ws.onerror = (error) => {
-                console.log("Websocket error:", error);
-            }
+            // ws.onerror = (error) => {
+            //     console.log("Websocket error:", error);
+            // }
 
-            ws.onclose = () => {
-                console.log("Websocket connection closed");
-            };
+            // ws.onclose = () => {
+            //     console.log("Websocket connection closed");
+            // };
 
             setBoard(generateCells(fields[level].rows, fields[level].columns));
             setMinesweeperConfig({
@@ -149,12 +152,12 @@ export const MainPage = () => {
             setLive(false);
             setGameOver(false);
             setGameWon(false);
+
+            setLive(true);
         })
         .catch(error => {
-            console.log("Error:", error);
+            console.error("Error:", error);
         })
-
-        
     };
 
     // Handles websocket messages
@@ -181,7 +184,6 @@ export const MainPage = () => {
             setBoard(updatedBoard);
             setGameOver(true);
             setLive(false);
-            console.log("Game Over! You clicked on a mine.");
             wsRef.current?.close();
         } else {
             let updatedBoard = [...board];
@@ -201,7 +203,6 @@ export const MainPage = () => {
             if (allNonMineRevealed) {
                 setGameWon(true);
                 setLive(false);
-                console.log("Congratulations! You win!");
             }
         }
 
@@ -216,6 +217,35 @@ export const MainPage = () => {
         }
     };
 
+    const handleLeaderboard = () => {
+        const url = "http://127.0.0.1:8000/game/leaderBoard";
+        if (!showLeaderboard) {
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response not ok...");
+                }
+                return response.json();
+            })
+            .then((data: [string, number][]) => {
+                const formattedData = data.map(entry => ({
+                    playerName: entry[0],
+                    time: entry[1],
+                }));
+                setLeaderboardData(formattedData);
+                setShowLeaderboard(true);
+            })
+            .catch(err => console.error("Error fetching leaderboard:", err));
+        } else {
+            setShowLeaderboard(false);
+        }
+    }
+
     return (
         <>
             <SoundContainer />
@@ -223,12 +253,18 @@ export const MainPage = () => {
             <h1>M<b className='ines-style'>ines</b>weeper</h1>
             
             { !minesweeperConfig && (
-                <div className='choose-level'>
-                    <SoundButton className='level' onClick={() => handleDifficultyClick("easy")} soundType='click-sound'>Easy</SoundButton>
-                    <SoundButton className='level' onClick={() => handleDifficultyClick("medium")} soundType='click-sound'>Medium</SoundButton>
-                    <SoundButton className='level' onClick={() => handleDifficultyClick("expert")} soundType='click-sound'>Expert</SoundButton>
-                </div>
+                <>
+                    <div className="choose-level">
+                        <SoundButton className="level" onClick={() => handleDifficultyClick("easy")} soundType="click-sound">Easy</SoundButton>
+                        <SoundButton className="level" onClick={() => handleDifficultyClick("medium")} soundType="click-sound">Medium</SoundButton>
+                        <SoundButton className="level" onClick={() => handleDifficultyClick("expert")} soundType="click-sound">Expert</SoundButton>
+                    </div>
+                    <div className="lb-table">
+                        <SoundButton className="level ranking" onClick={handleLeaderboard} soundType="click-sound">Leaderboard</SoundButton>
+                    </div>
+                </>
             )}
+
             
             { minesweeperConfig && 
                 <MinesweeperGame 
@@ -241,6 +277,8 @@ export const MainPage = () => {
                     onCellContext={handleCellContext} 
                 /> 
             }
+
+            { showLeaderboard && <Leaderboard data={leaderboardData} onClose={handleLeaderboard} />}
         </>
     );
 };

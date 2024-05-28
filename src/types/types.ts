@@ -7,8 +7,6 @@ export type Cell = {
     adjacentMines: number;
 };
 
-// export type Cell2 = "unrevealed" | "flag" | "empty" | "mine" | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
-
 export enum Face {
     explodingHead = "🤯",
     smile = "🙂",
@@ -21,7 +19,6 @@ export type Level = "easy" | "medium" | "expert";
 export type Field = {
     rows: number;
     columns: number;
-    // cells: Cell2[][];
     mines: number;
 };
 
@@ -49,4 +46,14 @@ export interface GameBoardProps {
     cell: Cell;
     onClick: () => void;
     onContext: (e: React.MouseEvent) => void;
+}
+
+export type LeaderboardEntry = {
+    playerName: string;
+    time: number
+}
+
+export type LeaderboardProps = {
+    data: LeaderboardEntry[];
+    onClose: () => void;
 }

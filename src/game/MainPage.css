@@ -29,6 +29,18 @@
     box-shadow: 0 0 15px 10px rgba(99, 232, 255, 0.4);
 }
 
+.lb-table {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+.ranking {
+    display: flex;
+    justify-content: center;
+}
+
 @media (max-width: 768px) {
     
     .choose-level {
@@ -41,6 +53,10 @@
         margin-bottom: 20px;
         font-size: 18px;
         width: 170px;
+    }
+
+    .lb-table {
+        margin-top: 0;
     }
     
 }
