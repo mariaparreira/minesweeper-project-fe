@@ -56,7 +56,13 @@ export const MainPage = () => {
     const [explodingAudio] = useState(new Audio(loseGame));
     const [fallingAudio] = useState(new Audio(fallCells));
     
-    const wsRef = useRef<WebSocket | null>(null);    
+    const wsRef = useRef<WebSocket | null>(null);
+
+    useEffect(() => {
+        clappingAudio.load();
+        explodingAudio.load();
+        fallingAudio.load();
+    }, [clappingAudio, explodingAudio, fallingAudio]);
 
     useEffect(() => {
         if (live && timer < 999) {
