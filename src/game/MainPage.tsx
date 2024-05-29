@@ -78,10 +78,11 @@ export const MainPage = () => {
     
     const handleDifficultyClick = (level: Level) => {
         let playerName = null;
+        const nameRegex = /^[a-zA-Z]{3,}$/;
         
         do {
             playerName = window.prompt("Enter your name:");
-        } while (!playerName);
+        } while (!playerName || !nameRegex.test(playerName));
         
         const url = `http://127.0.0.1:8000/game/create/${level}`;
         
