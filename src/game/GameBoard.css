@@ -29,16 +29,41 @@
 
 .board.falling {
     /* background-color: #007c92; */
-    animation: shake 2s ease forwards;
+    animation: wiggle 0.5s ease forwards;
 }
 
-@keyframes shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-2px); }
-    50% { transform: translateX(2px); }
-    75% { transform: translateX(-2px); }
-    100% { 
-        transform: translateX(0); 
+/* wiggle wiggle wiggle */
+@keyframes wiggle {
+    0% {
+        transform: rotateZ(0);
+    }
+
+    10% {
+        transform: rotateZ(7deg);
+    }
+
+    20% {
+        transform: rotateZ(-9deg);
+    }
+
+    30% {
+        transform: rotateZ(10deg);
+    }
+
+    40% {
+        transform: rotateZ(-13deg);
+    }
+
+    50% {
+        transform: rotateZ(17deg);
+    }
+
+    60% {
+        transform: rotateZ(-25deg);
+    }
+
+    100% {
+        transform: rotateZ(0deg);
         transform: translateY(1500px);
     }
 }

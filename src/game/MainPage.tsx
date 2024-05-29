@@ -171,9 +171,7 @@ export const MainPage = () => {
             wsRef.current?.close();
 
             explodingAudio.play();
-            setTimeout(() => {
-                fallingAudio.play();
-            }, 1000);
+            fallingAudio.play();
         } else {
             let updatedBoard = [...board];
             // Check for winning outcome

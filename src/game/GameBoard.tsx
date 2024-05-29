@@ -39,7 +39,6 @@ export const GameBoard: React.FC<GameBoardProps> = ({ cell, onClick, onContext }
             onClick={onClick} 
             onContextMenu={onContext}
             style={{ 
-                // animationDelay: cell.isFalling ? animationDelay: '0s',
                 animationDuration: cell.isFalling ? fallingDuration: '0s',
                 animationDelay: cell.isFalling ? fallingDelay: '0s',
             }}
