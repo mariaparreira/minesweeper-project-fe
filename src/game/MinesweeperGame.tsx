@@ -28,7 +28,7 @@ export const MinesweeperGame: React.FC<MinesweeperGameProps> = ({
 
     useEffect(() => {
         const handleMouseDown = () => {
-            setFace(Face.explodingHead);
+            setFace(Face.wow);
         };
 
         const handleMouseUp = () => {

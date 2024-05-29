@@ -55,7 +55,6 @@ export const MainPage = () => {
     const [clappingAudio] = useState(new Audio(winGame));
     const [explodingAudio] = useState(new Audio(loseGame));
     const [fallingAudio] = useState(new Audio(fallCells));
-    const [gameOverSoundLoaded, setGameOverSoundLoaded] = useState(false);
     
     const wsRef = useRef<WebSocket | null>(null);    
 
@@ -70,26 +69,6 @@ export const MainPage = () => {
             };
         }
     }, [live, timer]);
-
-    useEffect(() => {
-        if (gameWon) {
-            clappingAudio.play();
-        }
-    }, [gameWon, clappingAudio]);
-
-    useEffect(() => {
-        if (gameOver) {
-            if (!gameOverSoundLoaded) {
-                explodingAudio.play();
-                fallingAudio.play();
-                explodingAudio.addEventListener("canplaythrough", () => {
-                    setGameOverSoundLoaded(true);
-                    explodingAudio.play();
-                    fallingAudio.play();
-                })
-            }
-        }
-    }, [gameOver, explodingAudio, gameOverSoundLoaded]);
     
     const handleDifficultyClick = (level: Level) => {
         let playerName = null;
@@ -190,6 +169,11 @@ export const MainPage = () => {
             setGameOver(true);
             setLive(false);
             wsRef.current?.close();
+
+            explodingAudio.play();
+            setTimeout(() => {
+                fallingAudio.play();
+            }, 1000);
         } else {
             let updatedBoard = [...board];
             // Check for winning outcome
@@ -208,6 +192,8 @@ export const MainPage = () => {
             if (allNonMineRevealed) {
                 setGameWon(true);
                 setLive(false);
+                
+                clappingAudio.play();
             }
         }
 

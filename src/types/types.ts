@@ -9,10 +9,10 @@ export type Cell = {
 };
 
 export enum Face {
-    explodingHead = "🤯",
+    wow = "😮",
     smile = "🙂",
     won = "🥳",
-    lost = "🥺"
+    lost = "🤯"
 };
 
 export type Level = "easy" | "medium" | "expert";
