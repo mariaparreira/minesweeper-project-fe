@@ -51,6 +51,7 @@ export const MainPage = () => {
 
     const [showLeaderboard, setShowLeaderboard] = useState(false);
     const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
+    const [selectedLevel, setSelectedLevel] = useState<Level>("easy");
 
     const [clappingAudio] = useState(new Audio(winGame));
     const [explodingAudio] = useState(new Audio(loseGame));
@@ -214,32 +215,41 @@ export const MainPage = () => {
     };
 
     const handleLeaderboard = () => {
-        const url = "http://127.0.0.1:8000/game/leaderBoard";
+        setShowLeaderboard(!showLeaderboard);
         if (!showLeaderboard) {
-            fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Network response not ok...");
-                }
-                return response.json();
-            })
-            .then((data: [string, number][]) => {
-                const formattedData = data.map(entry => ({
-                    playerName: entry[0],
-                    time: entry[1],
-                }));
-                setLeaderboardData(formattedData);
-                setShowLeaderboard(true);
-            })
-            .catch(err => console.error("Error fetching leaderboard:", err));
-        } else {
-            setShowLeaderboard(false);
+            fetchLeaderboardData(selectedLevel);
         }
+    }
+
+    const fetchLeaderboardData = (level: Level) => {
+        const url = `http://127.0.0.1:8000/game/leaderBoard/${level}`;
+
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Network response not ok...");
+            }
+            return response.json();
+        })
+        .then((data: [string, number][]) => {
+            const formattedData = data.map(entry => ({
+                playerName: entry[0],
+                time: entry[1],
+            }));
+            setLeaderboardData(formattedData);
+            // setShowLeaderboard(true);
+        })
+        .catch(err => console.error("Error fetching leaderboard:", err));
+    }
+
+    const handleLevelChange = (level: Level) => {
+        setSelectedLevel(level);
+        fetchLeaderboardData(level);
     }
 
     return (
@@ -274,7 +284,14 @@ export const MainPage = () => {
                 /> 
             }
 
-            { showLeaderboard && <Leaderboard data={leaderboardData} onClose={handleLeaderboard} />}
+            { showLeaderboard && 
+                <Leaderboard 
+                    data={leaderboardData}
+                    level={selectedLevel}
+                    onLevelChange={handleLevelChange}
+                    onClose={handleLeaderboard} 
+                />
+            }
         </>
     );
 };

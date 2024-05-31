@@ -5,7 +5,7 @@ import { GameBoard } from "./GameBoard";
 import { Face, MinesweeperGameProps } from "../types/types";
 import { WithSoundProps, withSound } from "../sound/withSound";
 
-const SoundEmoji = withSound((props: React.ButtonHTMLAttributes<HTMLDivElement> & WithSoundProps) => (
+export const SoundDiv = withSound((props: React.ButtonHTMLAttributes<HTMLDivElement> & WithSoundProps) => (
     <div {...props} />
 ));
 
@@ -89,7 +89,7 @@ export const MinesweeperGame: React.FC<MinesweeperGameProps> = ({
             <div className='game-app'>
                 <div className='game-header'>
                     <NumberDisplay value={mines - flagsCounter} />
-                    <SoundEmoji className='emoji' onClick={handleRestartGame} soundType='arcade-game'>{face}</SoundEmoji>
+                    <SoundDiv className='emoji' onClick={handleRestartGame} soundType='arcade-game'>{face}</SoundDiv>
                     <NumberDisplay value={timer} />
                 </div>
                 <div ref={gameBoardRef} className={`game-board ${gridClass}`}>

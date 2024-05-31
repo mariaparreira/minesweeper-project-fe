@@ -56,5 +56,7 @@ export type LeaderboardEntry = {
 
 export type LeaderboardProps = {
     data: LeaderboardEntry[];
+    level: Level;
+    onLevelChange: (level: Level) => void;
     onClose: () => void;
 };

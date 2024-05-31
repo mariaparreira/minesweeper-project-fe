@@ -1,8 +1,8 @@
 import React from "react";
-import { CLICK_SOUND_ID, ARCADE_GAME_ID } from "./SoundContainer";
+import { CLICK_SOUND_ID, ARCADE_GAME_ID, INTERFACE_CLICK_ID } from "./SoundContainer";
 
 export interface WithSoundProps {
-    soundType: 'click-sound' | 'arcade-game',
+    soundType: 'click-sound' | 'arcade-game' | 'interface-click',
     onClick: () => void,
 };
 
@@ -17,6 +17,9 @@ export function withSound<P extends WithSoundProps>(Component: React.FC<P>): Rea
                     break;
                 case 'arcade-game':
                     soundId = ARCADE_GAME_ID;
+                    break;
+                case 'interface-click':
+                    soundId = INTERFACE_CLICK_ID;
                     break;
                 default:
                     soundId = CLICK_SOUND_ID;
