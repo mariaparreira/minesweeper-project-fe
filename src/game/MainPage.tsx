@@ -14,6 +14,7 @@ import loseGame from "../sound/lose/explosion.wav";
 import fallCells from "../sound/lose/falling-cells.mp3";
 
 import Confetti from "react-confetti";
+import { UserForm } from '../form/UserForm';
 
 
 // Define a new type that extends the Minesweeper type to include gridClass
@@ -56,6 +57,9 @@ export const MainPage = () => {
     const [clappingAudio] = useState(new Audio(winGame));
     const [explodingAudio] = useState(new Audio(loseGame));
     const [fallingAudio] = useState(new Audio(fallCells));
+
+    const [showUsernameForm, setShowUsernameForm] = useState<boolean>(false);
+    const [currentLevel, setCurrentLevel] = useState<Level | null>(null);
     
     const wsRef = useRef<WebSocket | null>(null);
 
@@ -76,15 +80,16 @@ export const MainPage = () => {
             };
         }
     }, [live, timer]);
-    
+
     const handleDifficultyClick = (level: Level) => {
-        let playerName = null;
-        const nameRegex = /^[a-zA-Z]{3,}$/;
-        
-        do {
-            playerName = window.prompt("Enter your name:");
-        } while (!playerName || !nameRegex.test(playerName));
-        
+        setCurrentLevel(level);
+        setShowUsernameForm(true);
+    };
+    
+    const handleSubmitUsername = (playerName: string) => {
+        if (!currentLevel) return
+
+        const level = currentLevel;
         const url = `http://127.0.0.1:8000/game/create/${level}`;
         
         fetch(url, {
@@ -149,6 +154,10 @@ export const MainPage = () => {
         .catch(error => {
             console.error("Error:", error);
         })
+        .finally(() => {
+            setShowUsernameForm(false);
+            setCurrentLevel(null);
+        });
     };
 
     // Handles websocket messages
@@ -269,6 +278,13 @@ export const MainPage = () => {
                         <SoundButton className="level ranking" onClick={handleLeaderboard} soundType="click-sound">Leaderboard</SoundButton>
                     </div>
                 </>
+            )}
+
+            {showUsernameForm && (
+                <UserForm 
+                    onSubmit={handleSubmitUsername}
+                    onClose={() => setShowUsernameForm(false)}
+                />
             )}
 
             

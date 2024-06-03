@@ -60,3 +60,8 @@ export type LeaderboardProps = {
     onLevelChange: (level: Level) => void;
     onClose: () => void;
 };
+
+export type UsernameProps = {
+    onSubmit: (username: string) => void;
+    onClose: () => void;
+}
