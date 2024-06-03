@@ -13,9 +13,8 @@
 .form-container {
     width: 200px;
     padding: 20px;
-    background-color: #006375;
+    background: linear-gradient(135deg, #058197, #002d35);
     border-radius: 10px;
-    /* transition: background 0.3s; */
 }
 
 .close {
