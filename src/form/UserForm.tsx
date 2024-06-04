@@ -33,6 +33,7 @@ export const UserForm: React.FC<UsernameProps> = ({ onSubmit, onClose }) => {
                             required
                             minLength={3}
                             pattern="^[a-zA-Z]+$"
+                            autoComplete="off"
                         />
                         <button className="submit-form" type="submit">Start Game</button>
                     </form>
