@@ -265,7 +265,11 @@ export const MainPage = () => {
     return (
         <>
             <SoundContainer />
-            { gameWon && <Confetti />}
+            { gameOver && 
+                <div style={{ position: 'fixed', width: '100%', height: '100%' }}>
+                    <Confetti />
+                </div>
+            }
             <h1>M<b className='ines-style'>ines</b>weeper</h1>
             
             { !minesweeperConfig && (
