@@ -84,6 +84,7 @@ export const MainPage = () => {
     const handleDifficultyClick = (level: Level) => {
         setCurrentLevel(level);
         setShowUsernameForm(true);
+        setShowLeaderboard(false);
     };
     
     const handleSubmitUsername = (playerName: string) => {
