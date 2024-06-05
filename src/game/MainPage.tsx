@@ -265,7 +265,7 @@ export const MainPage = () => {
     return (
         <>
             <SoundContainer />
-            { gameOver && 
+            { gameWon && 
                 <div style={{ position: 'fixed', width: '100%', height: '100%' }}>
                     <Confetti />
                 </div>
