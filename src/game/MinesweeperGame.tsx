@@ -72,7 +72,7 @@ export const MinesweeperGame: React.FC<MinesweeperGameProps> = ({
             const newBoard = [...currentBoard];
             const currentCell = newBoard[row][col];
     
-            if (!currentCell.isFlagged && flagsCounter < mines) { // Check if the number of flags placed is less than the number of mines
+            if (!currentCell.isFlagged) {
                 newBoard[row][col] = { ...currentCell, isFlagged: true };
                 setFlagsCounter(prevFlags => prevFlags + 1); // Increment the flags counter
             } else if (currentCell.isFlagged) {
